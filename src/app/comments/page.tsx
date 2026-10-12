@@ -7,6 +7,7 @@ import { CursorPagination } from "./_components/cursor-pagination";
 import { CommentsPerPage } from "./_components/comments-per-page";
 import { Routes } from "@/src/utils/routes";
 import { Metadata } from "next";
+import { Suspense } from "react";
 
 export const metadata: Metadata = {
   title: "next 15 | comments",
@@ -27,7 +28,7 @@ const getComments = async ({
     },
   });
 
-export default async function Comments({
+async function CommentResults({
   searchParams,
 }: {
   searchParams: Promise<{ cursor?: string; perPage?: string }>;
@@ -35,6 +36,22 @@ export default async function Comments({
   const { cursor, perPage } = await searchParams;
   const commentsPromise = getComments({ cursor, perPage });
 
+  return (
+    <>
+      <CommentsGrid commentsPromise={commentsPromise} />
+      <CursorPagination
+        commentsPromise={commentsPromise}
+        baseUrl={Routes.COMMENTS}
+      />
+    </>
+  );
+}
+
+export default function Comments({
+  searchParams,
+}: {
+  searchParams: Promise<{ cursor?: string; perPage?: string }>;
+}) {
   return (
     <ConvexClientProvider>
       <div className="min-h-[calc(100vh-140px)] flex flex-col gap-2 relative">
@@ -53,15 +70,14 @@ export default async function Comments({
 
         <div className="flex justify-between mb-4">
           <div></div>
-          <CommentsPerPage />
+          <Suspense fallback={<div className="h-10" />}>
+            <CommentsPerPage />
+          </Suspense>
         </div>
 
-        <CommentsGrid commentsPromise={commentsPromise} />
-
-        <CursorPagination
-          commentsPromise={commentsPromise}
-          baseUrl={Routes.COMMENTS}
-        />
+        <Suspense fallback={<p className="text-gray-400">Loading comments...</p>}>
+          <CommentResults searchParams={searchParams} />
+        </Suspense>
 
         <CommentInput />
       </div>

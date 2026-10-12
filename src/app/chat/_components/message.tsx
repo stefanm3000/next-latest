@@ -1,5 +1,5 @@
 import { Id } from "@/convex/_generated/dataModel";
-import { unstable_ViewTransition as ViewTransition } from "react";
+import { ViewTransition } from "react";
 
 interface Message {
   _id: Id<"messages">;

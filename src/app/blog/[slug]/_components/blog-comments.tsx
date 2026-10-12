@@ -1,7 +1,7 @@
 import { getComments } from "../actions";
 import { CommentForm } from "./comment-form";
 import { UpvoteButton } from "./upvote-button";
-import { unstable_ViewTransition as ViewTransition } from "react";
+import { ViewTransition } from "react";
 
 export async function BlogComments({ postId }: { postId: string }) {
   const comments = await getComments(postId);

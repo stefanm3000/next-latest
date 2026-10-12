@@ -1,6 +1,6 @@
 "use server";
 
-import { revalidateTag, unstable_cache } from "next/cache";
+import { updateTag, unstable_cache } from "next/cache";
 import { ConvexHttpClient } from "convex/browser";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
@@ -31,7 +31,7 @@ export async function addComment(formData: FormData) {
 
   await convex.mutation(api.blogComments.addComment, { postId, text });
 
-  revalidateTag(`comments-${postId}`);
+  updateTag(`comments-${postId}`);
 }
 
 export async function upvoteComment(formData: FormData) {
@@ -43,5 +43,5 @@ export async function upvoteComment(formData: FormData) {
     commentId: commentId as Id<"blogComments">,
   });
 
-  revalidateTag(`comments-${postId}`);
+  updateTag(`comments-${postId}`);
 }

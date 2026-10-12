@@ -2,7 +2,7 @@
 
 import { api } from "@/convex/_generated/api";
 import { useQuery } from "convex/react";
-import { useEffect, unstable_ViewTransition as ViewTransition } from "react";
+import { useEffect, ViewTransition } from "react";
 import { Message } from "./message";
 import { useChatUser } from "../_hooks/use-chat-user";
 

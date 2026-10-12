@@ -1,6 +1,6 @@
 import { Id } from "@/convex/_generated/dataModel";
 import { PaginationResult } from "convex/server";
-import { unstable_ViewTransition as ViewTransition } from "react";
+import { ViewTransition } from "react";
 import { Suspense, use } from "react";
 
 export function CommentsGrid({

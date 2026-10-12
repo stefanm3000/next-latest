@@ -1,6 +1,7 @@
 "use server";
 
 import { MovieDetail } from "@/src/utils/movies";
+import { cacheLife } from "next/cache";
 
 export const getMovies = async (
   query: string,
@@ -11,11 +12,14 @@ export const getMovies = async (
   totalPages: number;
   totalResults: number;
 }> => {
-  const url = `http://www.omdbapi.com/?apikey=${
+  "use cache";
+  cacheLife("hours");
+
+  const url = `https://www.omdbapi.com/?apikey=${
     process.env.SECRET_OMDB_API_KEY
   }&s=${encodeURIComponent(query)}&page=${page}`;
 
-  const response = await fetch(url, { next: { revalidate: 3600 } });
+  const response = await fetch(url);
   const data = await response.json();
 
   const movies = data.Search || [];

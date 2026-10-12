@@ -1,12 +1,13 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  experimental: {
-    ppr: "incremental",
-    viewTransition: true,
-    reactCompiler: {
-      compilationMode: "annotation",
-    },
+  cacheComponents: true,
+  partialPrefetching: false,
+  reactCompiler: {
+    compilationMode: "annotation",
+  },
+  turbopack: {
+    root: process.cwd(),
   },
   images: {
     remotePatterns: [

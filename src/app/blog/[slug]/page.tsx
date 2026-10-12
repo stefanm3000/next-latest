@@ -2,7 +2,7 @@ import { type SanityDocument } from "next-sanity";
 import { client } from "@/src/sanity/client";
 import Link from "next/link";
 import Image from "next/image";
-import { Suspense, unstable_ViewTransition as ViewTransition } from "react";
+import { Suspense, ViewTransition } from "react";
 import { ArrowLeft } from "lucide-react";
 
 import { PostBody } from "./_components/post-body";
@@ -12,19 +12,24 @@ import { DynamicValue } from "./_components/dynamic-value";
 
 import { ConvexClientProvider } from "../../comments/_components/convex-client-provider";
 import { BlogComments } from "./_components/blog-comments";
+import { cacheLife } from "next/cache";
+import { notFound } from "next/navigation";
 
 const POST_QUERY = `*[_type == "post" && slug.current == $slug][0]`;
 
 const { projectId, dataset } = client.config();
-
-export const experimental_ppr = true;
 
 const urlFor = (source: SanityImageSource) =>
   projectId && dataset
     ? imageUrlBuilder({ projectId, dataset }).image(source)
     : null;
 
-const options = { next: { revalidate: 30 } };
+async function getPost(slug: string) {
+  "use cache";
+  cacheLife({ stale: 30, revalidate: 30, expire: 3600 });
+
+  return client.fetch<SanityDocument | null>(POST_QUERY, { slug });
+}
 
 export async function generateMetadata({
   params: paramsPromise,
@@ -32,11 +37,8 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }) {
   const params = await paramsPromise;
-  const post = await client.fetch<SanityDocument>(
-    POST_QUERY,
-    { slug: params.slug },
-    options,
-  );
+  const post = await getPost(params.slug);
+  if (!post) notFound();
 
   return {
     title: post.title,
@@ -47,14 +49,9 @@ export async function generateMetadata({
 export async function generateStaticParams() {
   const posts = await client.fetch<SanityDocument[]>(
     `*[_type == "post" && defined(slug.current)]{slug}`,
-    {},
-    options,
   );
   return posts.map((post) => ({ slug: post.slug.current }));
 }
-
-export const revalidate = 3600;
-export const dynamicParams = true;
 
 export default async function PostPage({
   params: paramsPromise,
@@ -63,11 +60,8 @@ export default async function PostPage({
 }) {
   const params = await paramsPromise;
 
-  const post = await client.fetch<SanityDocument>(
-    POST_QUERY,
-    { slug: params.slug },
-    options,
-  );
+  const post = await getPost(params.slug);
+  if (!post) notFound();
   const postImageUrl = post.image
     ? urlFor(post.image)?.width(550).height(310).url()
     : null;

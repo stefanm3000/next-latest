@@ -2,36 +2,40 @@
   "name": "next-15",
   "version": "0.1.0",
   "private": true,
+  "engines": {
+    "node": ">=22.12.0"
+  },
   "scripts": {
-    "dev": "next dev --turbopack",
+    "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "eslint .",
+    "typecheck": "next typegen && tsc --noEmit"
   },
   "dependencies": {
     "@react-three/drei": "^10.3.0",
     "@react-three/fiber": "^9.1.2",
     "@react-three/rapier": "^2.1.0",
     "@sanity/image-url": "^1.1.0",
-    "babel-plugin-react-compiler": "19.1.0-rc.2",
+    "babel-plugin-react-compiler": "1.0.0",
     "convex": "^1.25.2",
     "lucide-react": "^0.518.0",
-    "next": "15.5.1-canary.39",
-    "next-sanity": "^9.12.0",
-    "react": "^19.0.0",
-    "react-dom": "^19.0.0",
+    "next": "16.4.0",
+    "next-sanity": "^13.3.4",
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0",
     "three": "^0.177.0"
   },
   "devDependencies": {
-    "@eslint/eslintrc": "^3",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^22",
-    "@types/react": "^19",
-    "@types/react-dom": "^19",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
     "@types/three": "^0.177.0",
     "eslint": "^9",
-    "eslint-config-next": "15.5.1-canary.39",
+    "eslint-config-next": "16.4.0",
+    "sanity": "^6.18.0",
     "tailwindcss": "^4",
-    "typescript": "^5"
+    "typescript": "^6.0.3"
   }
 }
