@@ -1,4 +1,4 @@
-import { unstable_ViewTransition as ViewTransition } from "react";
+import { ViewTransition } from "react";
 import { ConvexClientProvider } from "../comments/_components/convex-client-provider";
 
 export default function ChatLayout({

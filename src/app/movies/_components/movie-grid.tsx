@@ -1,7 +1,7 @@
 "use client";
 
 import { type MovieDetail } from "@/src/utils/movies";
-import { unstable_ViewTransition as ViewTransition } from "react";
+import { ViewTransition } from "react";
 import { MovieCard } from "./movie-card";
 
 interface MovieGridProps {

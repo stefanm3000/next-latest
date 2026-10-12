@@ -6,6 +6,8 @@ import { SortBy } from "./_components/sort-by";
 import { getMovies } from "./actions";
 import { Metadata } from "next";
 
+export const prefetch = "partial";
+
 interface SearchParams {
   s?: string;
   page?: string;
@@ -21,7 +23,7 @@ export const metadata: Metadata = {
   description: "Explore a collection of movies",
 };
 
-export default async function MoviesPage({ searchParams }: HomeProps) {
+async function MovieResults({ searchParams }: HomeProps) {
   const { s, page } = await searchParams;
 
   const query = s || "batman";
@@ -29,15 +31,21 @@ export default async function MoviesPage({ searchParams }: HomeProps) {
 
   const moviesPromise = getMovies(query, currentPage);
 
+  return <MovieList moviesPromise={moviesPromise} />;
+}
+
+export default function MoviesPage({ searchParams }: HomeProps) {
   return (
     <>
       <div className="sticky top-0 z-10 mb-8 py-4 flex flex-nowrap justify-center items-center gap-4">
-        <SearchForm />
-        <SortBy />
+        <Suspense fallback={<div className="h-10" />}>
+          <SearchForm />
+          <SortBy />
+        </Suspense>
       </div>
 
       <Suspense fallback={<MovieGridSkeleton />}>
-        <MovieList moviesPromise={moviesPromise} />
+        <MovieResults searchParams={searchParams} />
       </Suspense>
     </>
   );

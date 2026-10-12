@@ -5,6 +5,7 @@ import type { SanityImageSource } from "@sanity/image-url/lib/types/types";
 import { client } from "@/src/sanity/client";
 import { BlogPostCard } from "./_components/blog-post-card";
 import { Metadata } from "next";
+import { cacheLife } from "next/cache";
 
 export const metadata: Metadata = {
   title: "next 15 | blog",
@@ -30,10 +31,11 @@ const urlFor = (source: SanityImageSource) =>
     ? imageUrlBuilder({ projectId, dataset }).image(source)
     : null;
 
-const options = { next: { revalidate: 30 } };
-
 export default async function BlogPostPage() {
-  const posts = await client.fetch<SanityDocument[]>(POSTS_QUERY, {}, options);
+  "use cache";
+  cacheLife({ stale: 30, revalidate: 30, expire: 3600 });
+
+  const posts = await client.fetch<SanityDocument[]>(POSTS_QUERY);
 
   const noPosts = posts.length === 0;
 
@@ -51,7 +53,7 @@ export default async function BlogPostPage() {
         <p>
           these blog posts are rendered using next.js{" "}
           <a
-            href="https://nextjs.org/docs/app/getting-started/partial-prerendering"
+            href="https://nextjs.org/docs/app/getting-started/caching"
             className="underline"
           >
             PPR

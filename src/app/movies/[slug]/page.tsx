@@ -1,6 +1,9 @@
 import { Suspense } from "react";
 import { Details } from "./_components/movie-details";
 import { MovieSkeleton } from "../_components/movie-skeletons";
+import { cacheLife } from "next/cache";
+
+export const prefetch = "partial";
 
 export interface MovieData {
   imdbID: string;
@@ -43,10 +46,12 @@ export async function generateMetadata({
 }
 
 async function getMovieData(imdbID: string): Promise<MovieData | null> {
+  "use cache";
+  cacheLife("hours");
+
   try {
     const response = await fetch(
-      `http://www.omdbapi.com/?apikey=${process.env.SECRET_OMDB_API_KEY}&i=${imdbID}`,
-      { next: { revalidate: 3600 } },
+      `https://www.omdbapi.com/?apikey=${process.env.SECRET_OMDB_API_KEY}&i=${imdbID}`,
     );
 
     const data = await response.json();
@@ -62,7 +67,7 @@ async function getMovieData(imdbID: string): Promise<MovieData | null> {
   }
 }
 
-export default async function MovieDetailPage({
+async function MovieDetails({
   params,
 }: {
   params: Promise<{ slug: string }>;
@@ -70,9 +75,17 @@ export default async function MovieDetailPage({
   const { slug } = await params;
   const moviePromise = getMovieData(slug);
 
+  return <Details moviePromise={moviePromise} />;
+}
+
+export default function MovieDetailPage({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}) {
   return (
     <Suspense fallback={<MovieSkeleton />}>
-      <Details moviePromise={moviePromise} />
+      <MovieDetails params={params} />
     </Suspense>
   );
 }

@@ -4,6 +4,7 @@ import type { Metadata } from "next";
 import { Geist_Mono } from "next/font/google";
 import Link from "next/link";
 import Footer from "./_components/footer";
+import { Suspense } from "react";
 
 const geistMono = Geist_Mono({
   subsets: ["latin"],
@@ -35,7 +36,9 @@ export default function RootLayout({
 
             <main>{children}</main>
           </div>
-          <Footer />
+          <Suspense fallback={null}>
+            <Footer />
+          </Suspense>
         </div>
       </body>
     </html>

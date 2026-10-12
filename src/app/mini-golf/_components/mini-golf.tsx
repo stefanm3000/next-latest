@@ -41,6 +41,15 @@ export function MiniGolfGame() {
     new THREE.Vector3(1, 0, 0),
   );
 
+  const handleBallInHole = () => {
+    if (gameState.gameComplete) return;
+
+    setGameState((prev) => ({ ...prev, gameComplete: true }));
+    if (ballRef.current) {
+      ballRef.current.setLinvel({ x: 0, y: 0, z: 0 }, true);
+    }
+  };
+
   useEffect(() => {
     camera.position.copy(INITIAL_CAMERA_POSITION);
     camera.lookAt(INITIAL_CAMERA_TARGET);
@@ -217,15 +226,6 @@ export function MiniGolfGame() {
 
     // Regenerate obstacles
     setResetKey((prev) => prev + 1);
-  };
-
-  const handleBallInHole = () => {
-    if (gameState.gameComplete) return;
-
-    setGameState((prev) => ({ ...prev, gameComplete: true }));
-    if (ballRef.current) {
-      ballRef.current.setLinvel({ x: 0, y: 0, z: 0 }, true);
-    }
   };
 
   return (
